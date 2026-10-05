@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AI Bug Reproduction Engine</title>
+  <style>
+    :root { font-family: ui-sans-serif, system-ui, sans-serif; color: #111; }
+    body { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.4rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid #ddd; }
+    .REPRODUCED { color: #9b1c1c; font-weight: 600; }
+    .NOT_REPRODUCED { color: #166534; font-weight: 600; }
+    .INCONCLUSIVE { color: #92400e; font-weight: 600; }
+    pre { background: #0b1020; color: #e5e7eb; padding: 1rem; overflow: auto; font-size: 0.8rem; }
+    .muted { color: #6b7280; }
+  </style>
+</head>
+<body>
+  <h1>AI Bug Reproduction Engine</h1>
+  <p class="muted">Assists developers. Never edits application code. Reproduction requires a failed assertion.</p>
+  <table>
+    <thead>
+      <tr><th>Run</th><th>Status</th><th>Title</th><th>Repo</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <h2 id="detail-title"></h2>
+  <pre id="detail"></pre>
+  <script>
+    async function load() {
+      const runs = await fetch("/api/runs").then(r => r.json());
+      const tbody = document.getElementById("rows");
+      tbody.innerHTML = "";
+      for (const run of runs) {
+        const tr = document.createElement("tr");
+        const status = run.verdict || "PENDING";
+        tr.innerHTML = `<td><a href="#${run.run_id}">${run.run_id}</a></td>
+          <td class="${status}">${status}</td>
+          <td>${run.title}</td>
+          <td><code>${run.repo}</code></td>`;
+        tbody.appendChild(tr);
+      }
+      if (location.hash.length > 1) show(location.hash.slice(1));
+    }
+    async function show(id) {
+      const data = await fetch("/api/runs/" + id).then(r => r.json());
+      document.getElementById("detail-title").textContent = id;
+      document.getElementById("detail").textContent = data.markdown || JSON.stringify(data, null, 2);
+    }
+    window.addEventListener("hashchange", () => {
+      if (location.hash.length > 1) show(location.hash.slice(1));
+    });
+    load();
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "title": "Double-click checkout creates two orders and two payments",
+  "description": "A shopper double-clicks Place Order. Two orders and two card charges appear for the same cart even though the client sent one idempotency key.",
+  "steps": [
+    "Open checkout with a single widget in the cart",
+    "Client generates idempotency key checkout-abc",
+    "Rapidly submit place_order twice with that key"
+  ],
+  "observed": "Two orders and two payments are stored.",
+  "expected": "Exactly one order and one payment for a given idempotency key."
+}

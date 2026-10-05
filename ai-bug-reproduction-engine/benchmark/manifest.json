@@ -1,0 +1,10 @@
+{
+  "cases": [
+    {
+      "id": "shop-double-click",
+      "report": "examples/bug_report.json",
+      "buggy_repo": "examples/sample-shop",
+      "fixed_repo": "examples/sample-shop-fixed"
+    }
+  ]
+}
